@@ -38,7 +38,11 @@ export function spawnDetached(
         // Many sim-racing tools resolve config files relative to their own
         // exe directory; skip cwd override for the mac bundle case (`open`
         // handles activation itself).
-        cwd: isMacApp ? undefined : path.dirname(entry.path)
+        // \ normalized to / first: path.dirname only splits on \ when the
+        // *actual* runtime platform is win32 (it's a static binding, not a
+        // per-call check of process.platform), so this keeps behavior correct
+        // and deterministic under test regardless of which OS runs it.
+        cwd: isMacApp ? undefined : path.dirname(entry.path.replace(/\\/g, '/'))
       })
     } catch (err) {
       resolve({ ok: false, message: (err as Error).message })

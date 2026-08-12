@@ -3,7 +3,7 @@ import { access, readFile, unlink } from 'fs/promises'
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { tmpdir } from 'os'
-import { join, extname } from 'path'
+import { join, extname, posix } from 'path'
 import { randomUUID } from 'crypto'
 
 const execFileAsync = promisify(execFile)
@@ -21,7 +21,12 @@ const execFileAsync = promisify(execFile)
  */
 async function getMacAppIconDataUrl(appPath: string): Promise<string | undefined> {
   try {
-    const plistPath = join(appPath, 'Contents', 'Info.plist')
+    // appPath is always a macOS (forward-slash) path — path.posix.join keeps
+    // that deterministic under test regardless of which OS actually runs it,
+    // unlike the ambient join() below, which is host-platform-bound (same
+    // class of issue fixed in matching.ts/launch.ts). tmpPng further down
+    // stays on the ambient join since tmpdir() is a genuinely host-native path.
+    const plistPath = posix.join(appPath, 'Contents', 'Info.plist')
     const { stdout } = await execFileAsync('plutil', [
       '-extract',
       'CFBundleIconFile',
@@ -34,7 +39,7 @@ async function getMacAppIconDataUrl(appPath: string): Promise<string | undefined
     if (!iconFile) return undefined
     if (!/\.icns$/i.test(iconFile)) iconFile += '.icns'
 
-    const icnsPath = join(appPath, 'Contents', 'Resources', iconFile)
+    const icnsPath = posix.join(appPath, 'Contents', 'Resources', iconFile)
     await access(icnsPath)
 
     const tmpPng = join(tmpdir(), `ignition-icon-${randomUUID()}.png`)

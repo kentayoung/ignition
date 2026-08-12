@@ -30,6 +30,8 @@ jobs:
 
       - run: npm run typecheck
 
+      - run: npm test
+
       - name: Build + publish (mac)
         if: matrix.os == 'macos-latest'
         env:

@@ -44,6 +44,7 @@ staggered launch delays between programs.
 npm install
 npm run dev        # launches the app with hot reload
 npm run typecheck
+npm test            # unit tests (vitest)
 npm run build       # bundles main/preload/renderer into out/
 npm run build:mac   # bundles + packages a .dmg (electron-builder)
 npm run build:win   # bundles + packages a Windows installer (electron-builder)
@@ -90,3 +91,7 @@ distributed more widely, not required to use the app yourself.
 - **ps-list** for cross-platform "is this already running?" detection
 - IPC channel names are centralized in `src/shared/types.ts` (`IPC`) and the
   full renderer-facing API surface is defined once in `src/preload/index.ts`
+- **Vitest** for unit tests (`src/**/*.test.ts`, colocated with the code they
+  cover), focused on `src/main`'s cross-platform logic — process-name
+  matching, version comparison, detached-spawn behavior, and icon extraction.
+  Runs in CI on both `macos-latest` and `windows-latest`.

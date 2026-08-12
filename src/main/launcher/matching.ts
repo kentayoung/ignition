@@ -9,7 +9,12 @@ import type { ProgramEntry } from '@shared/types'
  */
 export function deriveMatchName(entry: Pick<ProgramEntry, 'path' | 'matchName'>): string {
   if (entry.matchName?.trim()) return entry.matchName.trim().toLowerCase()
-  const base = path.basename(entry.path)
+  // Normalize \ to / before basename-ing so this is deterministic regardless
+  // of which OS actually runs it — path.basename only splits on \ when the
+  // active platform is win32, so a Windows-style path passed through the
+  // posix implementation (e.g. under test on macOS/Linux) would otherwise
+  // come back unsplit.
+  const base = path.basename(entry.path.replace(/\\/g, '/'))
   return base.replace(/\.(app|exe)$/i, '').toLowerCase()
 }
 
