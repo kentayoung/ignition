@@ -1,6 +1,6 @@
 {
   "name": "ignition",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Launch a saved list of programs with one click.",
   "main": "./out/main/index.js",
   "author": "Kenta Young",
