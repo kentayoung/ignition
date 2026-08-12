@@ -1,0 +1,45 @@
+appId: dev.kentayoung.ignition
+productName: Ignition
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+publish:
+  provider: github
+  owner: kentayoung
+  repo: ignition
+
+win:
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+  icon: build/icon.ico
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+mac:
+  target:
+    - target: dmg
+      # universal: one DMG for both chips, avoids flaky double-DMG hdiutil CI failures
+      arch: [universal]
+  icon: build/icon.icns
+  category: public.app-category.utilities
+  hardenedRuntime: true
+  gatekeeperAssess: false
+dmg:
+  title: 'Ignition ${version}'
+
+linux:
+  target:
+    - AppImage
+  icon: build/icon.png
+  category: Utility
+
+# v1 ships unsigned/unnotarized — see README "Known warnings on first run".
+# Follow-up: a Windows code-signing cert (~$100-400/yr) and an Apple Developer
+# Program membership ($99/yr) + notarization step would remove those prompts.
