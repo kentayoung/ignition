@@ -34,9 +34,10 @@ before opening it.
   stay open even if you close the launcher window afterward)
 - Skips relaunching anything already running
 - Light / dark / system theme
+- Optional launch at OS startup, with a configurable delay (Settings menu)
 
-Not in v1 (by design): a system tray icon, running at Windows startup, and
-staggered launch delays between programs.
+Not in v1 (by design): a system tray icon and staggered launch delays between
+programs.
 
 ## Development
 
