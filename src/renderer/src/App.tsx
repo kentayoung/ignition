@@ -26,7 +26,7 @@ import { ProgramList } from './components/ProgramList'
 import { AddProgramButton } from './components/AddProgramButton'
 import { LaunchAllButton } from './components/LaunchAllButton'
 import { ThemeToggle } from './components/ThemeToggle'
-import { UpdatesButton } from './components/UpdatesButton'
+import { SettingsButton } from './components/SettingsButton'
 
 function summarize(results: LaunchResult[]): { text: string; severity: 'success' | 'warning' | 'error' } {
   const launched = results.filter((r) => r.status === 'launched').length
@@ -139,7 +139,7 @@ export default function App(): JSX.Element {
               Ignition
             </Typography>
             <Box sx={{ WebkitAppRegion: 'no-drag', justifySelf: 'end', display: 'flex' }}>
-              <UpdatesButton />
+              <SettingsButton />
               <ThemeToggle mode={mode} resolved={resolved} onChange={setMode} />
             </Box>
           </Toolbar>
