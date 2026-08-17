@@ -55,10 +55,18 @@ const api = {
     setThemeMode: (themeMode: ThemeMode): Promise<void> =>
       ipcRenderer.invoke(IPC.settingsSetThemeMode, { themeMode }),
     setAutoCheckForUpdates: (autoCheckForUpdates: boolean): Promise<void> =>
-      ipcRenderer.invoke(IPC.settingsSetAutoCheckForUpdates, { autoCheckForUpdates })
+      ipcRenderer.invoke(IPC.settingsSetAutoCheckForUpdates, { autoCheckForUpdates }),
+    setLaunchOnStartup: (launchOnStartup: boolean): Promise<void> =>
+      ipcRenderer.invoke(IPC.settingsSetLaunchOnStartup, { launchOnStartup }),
+    setLaunchOnStartupDelaySeconds: (launchOnStartupDelaySeconds: number): Promise<void> =>
+      ipcRenderer.invoke(IPC.settingsSetLaunchOnStartupDelaySeconds, {
+        launchOnStartupDelaySeconds
+      })
   },
   app: {
-    getVersion: (): Promise<string> => ipcRenderer.invoke(IPC.appGetVersion)
+    getVersion: (): Promise<string> => ipcRenderer.invoke(IPC.appGetVersion),
+    // Plain value, not IPC — process.platform is available synchronously in preload.
+    platform: process.platform
   },
   updates: {
     check: (): Promise<UpdateCheckResult> => ipcRenderer.invoke(IPC.updatesCheck),
