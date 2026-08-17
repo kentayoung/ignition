@@ -17,7 +17,12 @@ const store = new Store<AppData>({
     schemaVersion: 1,
     profiles: [],
     activeProfileId: null,
-    settings: { themeMode: 'system', autoCheckForUpdates: true }
+    settings: {
+      themeMode: 'system',
+      autoCheckForUpdates: true,
+      launchOnStartup: false,
+      launchOnStartupDelaySeconds: 0
+    }
   }
 })
 
@@ -128,22 +133,36 @@ export const dataStore = {
   },
 
   getSettings(): AppData['settings'] {
-    // electron-store only merges `defaults` for keys entirely absent from the
-    // persisted file, not deep-per-field — so a settings object saved before
-    // a new field existed won't automatically gain it. Fill gaps per-field at
-    // read time instead of requiring an explicit migration step.
+    // electron-store only merges `defaults` for keys entirely absent from the persisted file,
+    // not per-field — so fill gaps per-field at read time instead of requiring a migration step.
     const stored = store.get('settings')
     return {
       themeMode: stored.themeMode ?? 'system',
-      autoCheckForUpdates: stored.autoCheckForUpdates ?? true
+      autoCheckForUpdates: stored.autoCheckForUpdates ?? true,
+      launchOnStartup: stored.launchOnStartup ?? false,
+      launchOnStartupDelaySeconds: stored.launchOnStartupDelaySeconds ?? 0
     }
   },
 
+  updateSettings(patch: Partial<AppData['settings']>): void {
+    store.set('settings', { ...dataStore.getSettings(), ...patch })
+  },
+
   setThemeMode(themeMode: AppData['settings']['themeMode']): void {
-    store.set('settings', { ...dataStore.getSettings(), themeMode })
+    dataStore.updateSettings({ themeMode })
   },
 
   setAutoCheckForUpdates(autoCheckForUpdates: boolean): void {
-    store.set('settings', { ...dataStore.getSettings(), autoCheckForUpdates })
+    dataStore.updateSettings({ autoCheckForUpdates })
+  },
+
+  setLaunchOnStartup(launchOnStartup: boolean): void {
+    dataStore.updateSettings({ launchOnStartup })
+  },
+
+  setLaunchOnStartupDelaySeconds(launchOnStartupDelaySeconds: number): void {
+    // Clamp server-side too — the renderer clamps, but IPC can be called directly.
+    const clamped = Math.max(0, Math.min(3600, Math.round(launchOnStartupDelaySeconds) || 0))
+    dataStore.updateSettings({ launchOnStartupDelaySeconds: clamped })
   }
 }
