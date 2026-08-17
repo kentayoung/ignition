@@ -3,7 +3,20 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './ipc'
 import { autoCheckForUpdatesOnLaunch } from './ipc/updates'
+import { dataStore } from './store'
+import { syncLoginItemSettings, wasOpenedAtLogin } from './startup'
 import icon from '../../build/icon.png?asset'
+
+// Lets activate() cancel a pending delayed launch instead of racing it into a second window.
+let pendingLaunchTimer: ReturnType<typeof setTimeout> | null = null
+
+function showWindowNow(): void {
+  if (pendingLaunchTimer) {
+    clearTimeout(pendingLaunchTimer)
+    pendingLaunchTimer = null
+  }
+  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+}
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -59,13 +72,23 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  const settings = dataStore.getSettings()
+
+  // Keep the OS login item in sync in case it drifted from our stored setting.
+  syncLoginItemSettings(settings)
+
   registerIpcHandlers()
 
-  createWindow()
+  // Delay only when enabled and the OS opened us at login — manual launches are always immediate.
+  const delaySeconds =
+    settings.launchOnStartup && wasOpenedAtLogin() ? settings.launchOnStartupDelaySeconds : 0
+  if (delaySeconds > 0) {
+    pendingLaunchTimer = setTimeout(showWindowNow, delaySeconds * 1000)
+  } else {
+    showWindowNow()
+  }
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
+  app.on('activate', showWindowNow)
 })
 
 app.on('window-all-closed', () => {
