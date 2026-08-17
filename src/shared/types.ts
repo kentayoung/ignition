@@ -29,6 +29,9 @@ export type ThemeMode = 'light' | 'dark' | 'system'
 export interface AppSettings {
   themeMode: ThemeMode
   autoCheckForUpdates: boolean
+  launchOnStartup: boolean
+  /** Seconds to wait after login before showing the window. Only applied when launchOnStartup is on. */
+  launchOnStartupDelaySeconds: number
 }
 
 export type UpdateCheckStatus = 'up-to-date' | 'update-available' | 'error'
@@ -81,6 +84,8 @@ export const IPC = {
   settingsGet: 'settings:get',
   settingsSetThemeMode: 'settings:setThemeMode',
   settingsSetAutoCheckForUpdates: 'settings:setAutoCheckForUpdates',
+  settingsSetLaunchOnStartup: 'settings:setLaunchOnStartup',
+  settingsSetLaunchOnStartupDelaySeconds: 'settings:setLaunchOnStartupDelaySeconds',
 
   appGetVersion: 'app:getVersion',
 
