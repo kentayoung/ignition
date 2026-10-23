@@ -96,7 +96,8 @@ export default function App(): JSX.Element {
     await addEntry({
       displayName: picked.suggestedName,
       path: picked.path,
-      args: [],
+      args: picked.args ?? [],
+      matchName: picked.matchName,
       iconDataUrl: picked.iconDataUrl
     })
   }
