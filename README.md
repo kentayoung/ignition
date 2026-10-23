@@ -30,11 +30,19 @@ before opening it.
 
 - Multiple named profiles, each with its own ordered list of programs
 - Add a program via a native file picker, remove, and drag-to-reorder
+- On Windows the picker also accepts shortcuts: `.lnk` files are resolved to
+  their target, and Steam `.url` shortcuts (e.g. iRacing) launch through their
+  `steam://` address. It opens in the Start Menu folder, where those shortcuts live
+- Self-updating apps that install into versioned folders (Discord, Slack, and
+  other Squirrel apps) launch through their `Update.exe`, so updates don't
+  break the saved entry
 - **Launch All** spawns every program in the active profile, detached (they
   stay open even if you close the launcher window afterward)
 - Skips relaunching anything already running
 - Light / dark / system theme
-- Optional launch at OS startup, with a configurable delay (Settings menu)
+- Optional launch at OS startup (macOS and Windows), with a configurable delay
+- Update check on launch (can be turned off), plus a manual check
+- Both of the above live in the Settings menu
 
 Not in v1 (by design): a system tray icon and staggered launch delays between
 programs.
@@ -94,5 +102,6 @@ distributed more widely, not required to use the app yourself.
   full renderer-facing API surface is defined once in `src/preload/index.ts`
 - **Vitest** for unit tests (`src/**/*.test.ts`, colocated with the code they
   cover), focused on `src/main`'s cross-platform logic — process-name
-  matching, version comparison, detached-spawn behavior, and icon extraction.
+  matching, version comparison, detached-spawn behavior, icon extraction,
+  login-item syncing, and Squirrel launch rewriting.
   Runs in CI on both `macos-latest` and `windows-latest`.
