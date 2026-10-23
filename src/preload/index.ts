@@ -33,7 +33,13 @@ const api = {
       ipcRenderer.invoke(IPC.entriesReorder, { profileId, orderedIds })
   },
   dialog: {
-    pickProgram: (): Promise<{ path: string; suggestedName: string; iconDataUrl?: string } | null> =>
+    pickProgram: (): Promise<{
+      path: string
+      suggestedName: string
+      args?: string[]
+      matchName?: string
+      iconDataUrl?: string
+    } | null> =>
       ipcRenderer.invoke(IPC.dialogPickProgram)
   },
   icons: {
